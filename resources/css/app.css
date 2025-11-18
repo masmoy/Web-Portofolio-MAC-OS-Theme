@@ -1,0 +1,231 @@
+/* Pengaturan Dasar */
+body, html {
+    height: 100%;
+    margin: 0;
+    /* Ini font 'Inter' yang kita panggil di HTML (Blade) */
+    font-family: 'Inter', sans-serif; 
+    overflow: hidden; /* Sembunyikan scrollbar browser */
+}
+
+/* Wallpaper Desktop */
+#desktop {
+    height: 100vh; /* Setinggi layar */
+    /* Ganti URL ini dengan wallpaper yang kamu suka (misal dari Unsplash) */
+    background-image: url('https://images.unsplash.com/photo-1502790671504-542ad42d5189?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNjUyOXwwfDF8c2VhcmNofDEwfHxtYWNvfGVufDB8fHx8MTcwODY0MjY2MXww&ixlib=rb-4.0.3&q=80&w=1920');
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    display: flex; /* Ini trik agar jendela bisa kita taruh di tengah */
+    justify-content: center;
+    align-items: center;
+}
+
+/* 1. Menu Bar Atas */
+.menu-bar {
+    position: fixed; /* Tetap di atas */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 28px;
+    /* Efek 'frosted glass' (transparan blur) khas macOS */
+    background-color: rgba(255, 255, 255, 0.3); 
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px); /* Untuk Safari */
+    
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 15px;
+    font-size: 14px;
+    color: #333;
+    z-index: 100; /* Pastikan selalu di atas jendela */
+}
+
+.menu-bar span {
+    margin-right: 15px;
+    cursor: default; /* Kursor standar, karena ini bukan link */
+}
+
+.apple-logo {
+    font-size: 18px;
+    margin-right: 10px;
+}
+
+/* 2. Jendela Aplikasi (Window) */
+.window {
+    width: 600px;
+    height: 400px;
+    background-color: #f0f0f0;
+    border-radius: 10px;
+    border: 1px solid #c0c0c0;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    
+    /* Posisikan di tengah (nanti bisa di-drag) */
+    position: absolute; 
+    
+    /* Sembunyikan dulu */
+    display: none; 
+    
+    /* Animasi saat muncul */
+    transform: scale(0.9);
+    opacity: 0;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+    
+    z-index: 50;
+    overflow: hidden; /* Agar konten tidak keluar */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Class 'visible' ini akan kita tambahkan pakai JS untuk memunculkan jendela */
+.window.visible {
+    display: flex;
+    transform: scale(1);
+    opacity: 1;
+}
+
+/* Header Jendela (tempat tombol merah-kuning-hijau) */
+.window-header {
+    height: 30px;
+    background-color: #e0e0e0;
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+    cursor: grab; /* Kursor 'tangan' untuk memberi tahu ini bisa di-drag */
+    border-bottom: 1px solid #c0c0c0;
+}
+
+.traffic-lights {
+    display: flex;
+}
+
+.traffic-light {
+    border-radius: 50%;
+    width: 12px;
+    height: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    margin-right: 6px;
+    cursor: pointer;
+}
+.traffic-light.red { background-color: #ff5f57; }
+.traffic-light.yellow { background-color: #febc2e; }
+.traffic-light.green { background-color: #28c840; }
+
+.window-title {
+    font-weight: 500;
+    font-size: 14px;
+    margin-left: 10px;
+    /* Mencegah teks judul ikut terseleksi saat di-drag */
+    user-select: none; 
+}
+
+.window-content {
+    padding: 15px;
+    flex-grow: 1; /* Konten mengisi sisa ruang */
+    overflow-y: auto; /* Bisa di-scroll jika konten panjang */
+    background-color: #fafafa;
+}
+
+/* 3. Dock Bawah */
+.dock {
+    position: fixed; /* Tetap di bawah */
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%); /* Trik agar pas di tengah */
+    
+    height: 60px;
+    background-color: rgba(255, 255, 255, 0.3); /* Efek 'frosted glass' */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    z-index: 100;
+}
+
+.dock-icon {
+    font-size: 36px;
+    margin: 0 8px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    position: relative; /* Untuk 'tooltip' (nama icon) */
+}
+
+/* Efek 'magnify' (memperbesar) saat hover */
+.dock-icon:hover {
+    transform: scale(1.4) translateY(-10px);
+}
+
+/* Tooltip (nama icon) */
+.dock-icon .tooltip {
+    position: absolute;
+    bottom: 75px; /* Posisikan di atas icon */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 13px;
+    white-space: nowrap; /* Jangan ganti baris */
+    
+    /* Sembunyikan dulu */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s, visibility 0.2s;
+    user-select: none; /* Jangan bisa diseleksi */
+}
+
+/* Tampilkan tooltip saat icon di-hover */
+.dock-icon:hover .tooltip {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Style tambahan untuk daftar proyek */
+.project-list {
+    list-style-type: none;
+    padding-left: 0;
+}
+.project-list li {
+    margin-bottom: 15px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+}
+.project-list li:last-child {
+    border-bottom: none;
+}
+.project-list p {
+    margin: 5px 0 0 0;
+    font-size: 14px;
+    color: #555;
+}
+
+/* --- Style untuk Jendela Maximized --- */
+
+.window.maximized {
+    /* Paksa jadi fullscreen di bawah menu bar */
+    top: 28px !important; /* 28px adalah tinggi menu bar kita */
+    left: 0 !important;
+    width: 100vw !important;
+    height: calc(100vh - 28px) !important; /* Tinggi layar - tinggi menu bar */
+
+    /* Hilangkan sudut bulat dan bayangan */
+    border-radius: 0;
+    box-shadow: none;
+    
+    /* Hapus animasi scale agar tidak aneh */
+    transform: none !important; 
+    
+    /* Transisi agar perpindahannya mulus */
+    transition: width 0.3s ease-in-out, height 0.3s ease-in-out, top 0.3s ease-in-out, left 0.3s ease-in-out;
+}
+
+/* Saat maximized, header-nya jangan bisa di-drag */
+.window.maximized .window-header {
+    cursor: default; /* Ganti dari 'grab' jadi 'default' */
+}
